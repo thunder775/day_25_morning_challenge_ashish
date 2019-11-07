@@ -30,8 +30,8 @@ transposeMatrix(List<List> matrix) {
   return transpose;
 }
 
-bool notInRow(List<List<int>> board, int row) {
-  if (board[row]
+checkList(List<List<int>> board, int i) {
+  if (board[i]
       .toSet()
       .length != 9) {
     return false;
@@ -39,11 +39,15 @@ bool notInRow(List<List<int>> board, int row) {
   else {
     return true;
   }
+}
+
+bool notInRow(List<List<int>> board, int row) {
+  return checkList(board, row);
   }
 
 bool notInCol(List<List<int>> board, int col) {
   List transposed = transposeMatrix(board);
-  return notInRow(board, col);
+  return checkList(board, col);
 }
 
 bool notInBox(List<List<int>> board, int row, int col) {
@@ -57,7 +61,9 @@ bool notInBox(List<List<int>> board, int row, int col) {
           return false;
         } else {
           st.add(curr);
+          print(st);
         }
+
       }
     }
   }
@@ -73,7 +79,7 @@ bool sudokuValidator(List<List<int>> board) {
   int n = 9;
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      if (!isValid(board, i, j) && notInBox(board, i - i % 3, j - j % 3)) {
+      if (!isValid(board, i, j) && notInBox(board, i, j)) {
         return false;
       }
     }
