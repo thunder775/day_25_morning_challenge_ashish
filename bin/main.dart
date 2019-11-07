@@ -20,42 +20,44 @@
 //  [ 6, 2, 5, 9, 4, 8, 1, 3, 7 ],
 //  [ 8, 7, 3, 5, 1, 2, 9, 6, 4 ]
 //  ]) ➞ true
-bool notInRow(List<List<int>> board, int row) {
-// Set to store characters seen so far.
-  List<int> st = [];
-  for (int i = 0; i < 9; i++) {
-    if (st.contains(board[row][i])) {
-      return false;
-    } else {
-      st.add((board[row][i]));
-    }
+transposeMatrix(List<List> matrix) {
+  List<List> transpose = List<List>();
+  for (int i = 0; i < matrix[0].length; i++) {
+    List newList = List();
+    matrix.forEach((list) => {newList.add(list[i])});
+    transpose.add(newList);
   }
-  return true;
+  return transpose;
 }
 
-bool notInCol(List<List<int>> board, int col) {
-// Set to store characters seen so far.
-  List<int> st = [];
-  for (int i = 0; i < 9; i++) {
-    if (st.contains(board[i][col])) {
-      return false;
-    } else {
-      st.add((board[i][col]));
-    }
+bool notInRow(List<List<int>> board, int row) {
+  if (board[row]
+      .toSet()
+      .length != 9) {
+    return false;
   }
-  return true;
+  else {
+    return true;
+  }
+  }
+
+bool notInCol(List<List<int>> board, int col) {
+  List transposed = transposeMatrix(board);
+  return notInRow(board, col);
 }
 
 bool notInBox(List<List<int>> board, int row, int col) {
 // Set to store characters seen so far.
   List<int> st = [];
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      int curr = board[i + row][j + col];
-      if (st.contains(curr)) {
-        return false;
-      } else {
-        st.add(curr);
+  if (row % 3 - 1 == 0 && col % -1 == 0) {
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        int curr = board[i + row][j + col];
+        if (st.contains(curr)) {
+          return false;
+        } else {
+          st.add(curr);
+        }
       }
     }
   }
@@ -64,15 +66,14 @@ bool notInBox(List<List<int>> board, int row, int col) {
 
 bool isValid(List<List<int>> board, int row, int col) {
   return notInRow(board, row) &&
-      notInCol(board, col) &&
-      notInBox(board, row - row % 3 , col - col % 3);
+      notInCol(board, col);
 }
 
 bool sudokuValidator(List<List<int>> board) {
   int n = 9;
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      if (!isValid(board, i, j)) {
+      if (!isValid(board, i, j) && notInBox(board, i - i % 3, j - j % 3)) {
         return false;
       }
     }
