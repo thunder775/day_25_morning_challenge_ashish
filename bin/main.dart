@@ -23,17 +23,20 @@
 //  ]) ➞ true
 
 bool sudokuValidator(List<List<int>> board) {
-  bool isValid = true;
   for (int i = 0; i < board.length; i++) {
-    isValid = checkRowAndColumn(board, i);
+    if (checkRowAndColumn(board, i) == false) {
+      return false;
+    }
   }
 
   for (int i = 0; i < 9; i += 3) {
     for (int j = 0; j < 9; j += 3) {
-      isValid = check3x3box(board, i, j);
+      if (check3x3box(board, i, j) == false) {
+        return false;
+      }
     }
   }
-  return isValid;
+  return true;
 }
 
 bool check3x3box(List<List<int>> board, int row, int col) {
