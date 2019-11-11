@@ -19,6 +19,7 @@
 //  [ 9, 1, 4, 6, 3, 7, 5, 8, 2 ],
 //  [ 6, 2, 5, 9, 4, 8, 1, 3, 7 ],
 //  [ 8, 7, 3, 5, 1, 2, 9, 6, 4 ]
+
 //  ]) ➞ true
 transposeMatrix(List<List> matrix) {
   List<List> transpose = List<List>();
@@ -31,31 +32,35 @@ transposeMatrix(List<List> matrix) {
 }
 
 checkList(List<List<int>> board, int i) {
-  if (board[i]
+  return !(board[i]
       .toSet()
-      .length != 9) {
-    return false;
-  }
-  else {
-    return true;
-  }
+      .length != 9);
 }
 
-bool notInRow(List<List<int>> board, int row) {
+bool validInputs(List<List<int>> board) {
+  int count = 0;
+  for (var x in board) {
+    for (int y in x) {
+      if (y > 0 && y < 10) count++;
+    }
+  }
+  return count == 9 * 9;
+}
+
+bool checkRow(List<List<int>> board, int row) {
   return checkList(board, row);
   }
 
-bool notInCol(List<List<int>> board, int col) {
+bool checkCol(List<List<int>> board, int col) {
   List transposed = transposeMatrix(board);
   return checkList(board, col);
 }
 
-bool notInBox(List<List<int>> board, int row, int col) {
+bool checkBlock(List<List<int>> board, int row, int col) {
 // Set to store characters seen so far.
   List<int> st = [];
-  if (row % 3 - 1 == 0 && col % -1 == 0) {
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
+  for (int i = 0; i < 3; i + 3) {
+    for (int j = 0; j < 3; j + 3) {
         int curr = board[i + row][j + col];
         if (st.contains(curr)) {
           return false;
@@ -65,26 +70,22 @@ bool notInBox(List<List<int>> board, int row, int col) {
         }
 
       }
-    }
   }
   return true;
 }
 
 bool isValid(List<List<int>> board, int row, int col) {
-  return notInRow(board, row) &&
-      notInCol(board, col);
+  return checkRow(board, row) &&
+      checkCol(board, col) && checkBlock(board, row, col) && validInputs(board);
 }
 
 bool sudokuValidator(List<List<int>> board) {
   int n = 9;
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      if (!isValid(board, i, j) && notInBox(board, i, j)) {
-        return false;
+      return !(!isValid(board, i, j));
       }
     }
-  }
-  return true;
 }
 
 // Challenge 3
