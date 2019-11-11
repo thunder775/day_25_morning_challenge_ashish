@@ -21,71 +21,41 @@
 //  [ 8, 7, 3, 5, 1, 2, 9, 6, 4 ]
 
 //  ]) ➞ true
-transposeMatrix(List<List> matrix) {
-  List<List> transpose = List<List>();
-  for (int i = 0; i < matrix[0].length; i++) {
-    List newList = List();
-    matrix.forEach((list) => {newList.add(list[i])});
-    transpose.add(newList);
-  }
-  return transpose;
-}
-
-checkList(List<List<int>> board, int i) {
-  return !(board[i]
-      .toSet()
-      .length != 9);
-}
-
-bool validInputs(List<List<int>> board) {
-  int count = 0;
-  for (var x in board) {
-    for (int y in x) {
-      if (y > 0 && y < 10) count++;
-    }
-  }
-  return count == 9 * 9;
-}
-
-bool checkRow(List<List<int>> board, int row) {
-  return checkList(board, row);
-  }
-
-bool checkCol(List<List<int>> board, int col) {
-  List transposed = transposeMatrix(board);
-  return checkList(board, col);
-}
-
-bool checkBlock(List<List<int>> board, int row, int col) {
-// Set to store characters seen so far.
-  List<int> st = [];
-  for (int i = 0; i < 3; i + 3) {
-    for (int j = 0; j < 3; j + 3) {
-        int curr = board[i + row][j + col];
-        if (st.contains(curr)) {
-          return false;
-        } else {
-          st.add(curr);
-          print(st);
-        }
-
-      }
-  }
-  return true;
-}
-
-bool isValid(List<List<int>> board, int row, int col) {
-  return checkRow(board, row) &&
-      checkCol(board, col) && checkBlock(board, row, col) && validInputs(board);
-}
 
 bool sudokuValidator(List<List<int>> board) {
-  int n = 9;
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      return !(!isValid(board, i, j));
-      }
+  bool isValid = true;
+  for (int i = 0; i < board.length; i++) {
+    isValid = checkRowAndColumn(board, i);
+  }
+
+  for (int i = 0; i < 9; i += 3) {
+    for (int j = 0; j < 9; j += 3) {
+      isValid = check3x3box(board, i, j);
     }
+  }
+  return isValid;
+}
+
+bool check3x3box(List<List<int>> board, int row, int col) {
+  List boxElements = [];
+  for (int i = row; i < row + 3; i++) {
+    for (int j = col; j < col + 3; j++) {
+      boxElements.add(board[i][j]);
+    }
+  }
+  return boxElements.toSet().length == 9;
+}
+
+bool checkRowAndColumn(List<List<int>> board, int index) {
+  /// check col
+  List colElements = [];
+  for (int i = 0; i < board.length; i++) {
+    colElements.add(board[i][index]);
+  }
+
+  /// returns row and column validation
+  return (board[index].toSet().length == 9) &&
+      (colElements.toSet().length == 9);
 }
 
 // Challenge 3
@@ -128,20 +98,17 @@ int comparator(int a, int b) {
   }
 }
 
-
 main() {
-
-print (sudokuValidator([
-  [ 1, 5, 2, 4, 8, 9, 3, 7, 6 ],
-  [ 7, 3, 9, 2, 5, 6, 8, 4, 1 ],
-  [ 4, 6, 8, 3, 7, 1, 2, 9, 5 ],
-  [ 3, 8, 7, 1, 2, 4, 6, 5, 9 ],
-  [ 5, 9, 1, 7, 6, 3, 4, 2, 8 ],
-  [ 2, 4, 6, 8, 9, 5, 7, 1, 3 ],
-  [ 9, 1, 4, 6, 3, 7, 5, 8, 2 ],
-  [ 6, 2, 5, 9, 4, 8, 1, 3, 7 ],
-  [ 8, 7, 3, 5, 1, 2, 9, 6, 4 ]
-]));
-print(factorSort([9, 7, 13, 12]));
-
+  print(sudokuValidator([
+    [1, 5, 2, 4, 8, 9, 3, 7, 6],
+    [7, 3, 9, 2, 5, 6, 8, 4, 1],
+    [4, 6, 8, 3, 7, 1, 2, 9, 5],
+    [3, 8, 7, 1, 2, 4, 6, 5, 9],
+    [5, 9, 1, 7, 6, 3, 4, 2, 8],
+    [2, 4, 6, 8, 9, 5, 7, 1, 3],
+    [9, 1, 4, 6, 3, 7, 5, 8, 2],
+    [6, 2, 5, 9, 4, 8, 1, 3, 7],
+    [8, 7, 3, 5, 1, 2, 9, 6, 4]
+  ]));
+  print(factorSort([9, 7, 13, 12]));
 }
